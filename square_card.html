@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+  </head>
+  <body>
+    <div id="card-container"></div>
+    <button id="card-button">Pay</button>
+
+    <script>
+      async function main() {
+        const payments = Square.payments('sandbox-sq0idb-iVRVUlkkw_fkcQsssgrUHg', 'LY75MEDD47HN5');
+        const card = await payments.card();
+        await card.attach('#card-container');
+
+        document.getElementById('card-button').addEventListener('click', async function () {
+          const result = await card.tokenize();
+          if (result.status === 'OK') {
+            const nonce = result.token;
+            window.flutter_inappwebview.callHandler('cardNonceHandler', nonce);
+          } else {
+            alert("Card error: " + result.errors[0].message);
+          }
+        });
+      }
+      main();
+    </script>
+  </body>
+</html>
